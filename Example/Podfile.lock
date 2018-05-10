@@ -1,0 +1,16 @@
+PODS:
+  - SNPnotificationBar (0.1.0)
+
+DEPENDENCIES:
+  - SNPnotificationBar (from `../`)
+
+EXTERNAL SOURCES:
+  SNPnotificationBar:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SNPnotificationBar: cb15e33ca67fb0ace165ed3e8ff5f8edd1bcff69
+
+PODFILE CHECKSUM: bd63c8d3dcc644ed0c36c09bb5db075e5fafec7f
+
+COCOAPODS: 1.5.0

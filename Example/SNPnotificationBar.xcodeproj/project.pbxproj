@@ -30,7 +30,7 @@
 /* Begin PBXFileReference section */
 		15816903337D8E6429C87882 /* Pods-SNPnotificationBar_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SNPnotificationBar_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SNPnotificationBar_Example/Pods-SNPnotificationBar_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		39FBDF6017E26D407C6F0A72 /* Pods-SNPnotificationBar_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SNPnotificationBar_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SNPnotificationBar_Tests/Pods-SNPnotificationBar_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		3A4C3A74349103974653AEEB /* SNPnotificationBar.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = SNPnotificationBar.podspec; path = ../SNPnotificationBar.podspec; sourceTree = "<group>"; };
+		3A4C3A74349103974653AEEB /* SNPnotificationBar.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = SNPnotificationBar.podspec; path = ../SNPnotificationBar.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		607FACD01AFB9204008FA782 /* SNPnotificationBar_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SNPnotificationBar_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -41,8 +41,8 @@
 		607FACE51AFB9204008FA782 /* SNPnotificationBar_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SNPnotificationBar_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		677CD85CD003B6B7BD75B826 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		866AA2C818F4596CFF3CE629 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		677CD85CD003B6B7BD75B826 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		866AA2C818F4596CFF3CE629 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9B9CE6D1329A4824A22F2301 /* Pods_SNPnotificationBar_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SNPnotificationBar_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A77BCEA76791A9894EF26CF4 /* Pods_SNPnotificationBar_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SNPnotificationBar_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB6581BBA2CEC6A0D34F5D81 /* Pods-SNPnotificationBar_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SNPnotificationBar_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SNPnotificationBar_Example/Pods-SNPnotificationBar_Example.release.xcconfig"; sourceTree = "<group>"; };

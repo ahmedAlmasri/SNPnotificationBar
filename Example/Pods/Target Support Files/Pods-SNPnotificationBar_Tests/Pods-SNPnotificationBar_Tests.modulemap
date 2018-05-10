@@ -1,0 +1,6 @@
+framework module Pods_SNPnotificationBar_Tests {
+  umbrella header "Pods-SNPnotificationBar_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

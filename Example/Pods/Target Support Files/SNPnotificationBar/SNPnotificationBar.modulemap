@@ -1,0 +1,6 @@
+framework module SNPnotificationBar {
+  umbrella header "SNPnotificationBar-umbrella.h"
+
+  export *
+  module * { export * }
+}
