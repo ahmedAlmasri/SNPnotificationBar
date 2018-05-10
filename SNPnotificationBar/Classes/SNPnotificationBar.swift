@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class NotificationBarConfiguration {
+public class SNPnotificationBarConfiguration {
     
     
     public var duration: TimeInterval
@@ -19,6 +19,8 @@ public class NotificationBarConfiguration {
     
     public var padding: CGFloat
     
+    public var margin: CGFloat
+    
     public var warningColor: UIColor
     
     public var successColor: UIColor
@@ -26,7 +28,9 @@ public class NotificationBarConfiguration {
     public var errorColor: UIColor
     
     public var infoColor: UIColor
-
+    
+    public var cornerRadius:CGFloat
+    
     init() {
         duration = 4.0
         font = UIFont.systemFont(ofSize: 16.0)
@@ -36,19 +40,21 @@ public class NotificationBarConfiguration {
         successColor = #colorLiteral(red: 0.3607843137, green: 0.6431372549, blue: 0.137254902, alpha: 1)
         errorColor = #colorLiteral(red: 0.7764705882, green: 0.05490196078, blue: 0.07450980392, alpha: 1)
         infoColor = #colorLiteral(red: 0.1725490196, green: 0.6470588235, blue: 0.7960784314, alpha: 1)
+        cornerRadius = 0
+        margin = 0
     }
 }
 
-public enum NotificationBarStyle {
+public enum SNPnotificationBarStyle {
     
     case warning, success, error , info , custom(VisualConfig)
     
     
     public struct VisualConfig {
         let backgroundColor: UIColor
-        let dismiss: NotificationBarDismiss
+        let dismiss: SNPnotificationBarDismiss
         
-        public init(backgroundColor: UIColor, dismiss: NotificationBarDismiss) {
+        public init(backgroundColor: UIColor, dismiss: SNPnotificationBarDismiss) {
             self.backgroundColor = backgroundColor
             self.dismiss = dismiss
         }
@@ -58,7 +64,7 @@ public enum NotificationBarStyle {
         switch self {
         case .warning:
             return VisualConfig(backgroundColor: SNPnotificationBar.sharedConfig.warningColor,
-                                dismiss: .manual)
+                                dismiss: .auto)
         case .success:
             return VisualConfig(backgroundColor: SNPnotificationBar.sharedConfig.successColor,
                                 dismiss: .auto)
@@ -74,53 +80,39 @@ public enum NotificationBarStyle {
     }
 }
 
-public enum NotificationBarDismiss {
+public enum SNPnotificationBarDismiss {
     case manual, auto
+}
+
+public enum SNPnotificationBarPosition {
+    case top, bottom
 }
 
 public class SNPnotificationBar{
     
-    public static let sharedConfig = NotificationBarConfiguration()
+    public static let sharedConfig = SNPnotificationBarConfiguration()
     
-    private var presenter: UIViewController? = nil
+    private var presenter: UIViewController
     private var text: String
-    private let style: NotificationBarStyle
+    private let style: SNPnotificationBarStyle
     private let onDismiss: (() -> ())?
     private var view: UIView!
+    private var position:SNPnotificationBarPosition
     
-    
-    public init(_ presenter: UIViewController? = nil,
+    public init(_ presenter: UIViewController,
                 text: String,
-                style: NotificationBarStyle,
+                style: SNPnotificationBarStyle,
+                position:SNPnotificationBarPosition = .top,
                 onDismiss: (() -> ())? = nil) {
-       
+        
         
         self.presenter = presenter
         self.text = text
         self.style = style
         self.onDismiss = onDismiss
-        setupPresenter()
+        self.position = position
         setupView()
         subscribeForRotationChanges()
-    }
-    
-  
-    private func setupPresenter(){
-        
-        if self.presenter == nil {
-            self.presenter = getTopController()
-        }
-    }
-  private func getTopController()->UIViewController?{
-        
-        if var topController = UIApplication.shared.keyWindow?.rootViewController {
-            while let presentedViewController = topController.presentedViewController {
-                topController = presentedViewController
-            }
- 
-            return topController
-        }
-        fatalError("top Controller is nil")
     }
     
     public func show() {
@@ -132,20 +124,38 @@ public class SNPnotificationBar{
     }
     
     private func setupView() {
-        
-        let width = presenter?.view.frame.width
+        let margin = SNPnotificationBar.sharedConfig.margin
+        let width = presenter.view.frame.width
         let height = SNPnotificationBar.sharedConfig.padding + textHeight()
-        view = UIView(frame: CGRect(x: 0,
-                                    y: -height,
-                                    width: width ?? 0.0,
+        
+        view = UIView(frame: CGRect(x: margin,
+                                    y: (-height+margin),
+                                    width: (width - (margin*2)),
                                     height: height))
+        
+        setupPosition()
         view?.backgroundColor = style.config().backgroundColor
         view?.alpha = 0
-        presenter?.view.addSubview(view)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = SNPnotificationBar.sharedConfig.cornerRadius
+        presenter.view.addSubview(view)
         
         setupLabel()
     }
     
+    func setupPosition(){
+        let margin = SNPnotificationBar.sharedConfig.margin
+        let height = SNPnotificationBar.sharedConfig.padding + textHeight()
+        
+        switch self.position {
+        case .top:
+            view.frame.origin.y = (-height+margin)
+            break
+        case .bottom:
+            view.frame.origin.y =   (UIScreen.main.bounds.height - (height+margin))
+            break
+        }
+    }
     private func setupLabel() {
         
         let padding = SNPnotificationBar.sharedConfig.padding
@@ -168,9 +178,16 @@ public class SNPnotificationBar{
     
     
     private func animateIn() {
+        
+        
+        
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.view.alpha = 1
-            self.view.center.y += self.view.frame.height
+            if self.position == .top {
+                self.view.center.y += (self.view.frame.height )
+            }else if self.position == .bottom {
+                self.view.frame.origin.y -=  SNPnotificationBar.sharedConfig.margin //(self.view.frame.height )
+            }
         }, completion: nil)
         
         if style.config().dismiss == .auto {
@@ -179,9 +196,14 @@ public class SNPnotificationBar{
     }
     
     private func animateOut(withDelay delay: TimeInterval) {
+        
         UIView.animate(withDuration: 0.5, delay: delay, options: .curveEaseOut, animations: {
             self.view.alpha = 0
-            self.view.center.y -= self.view.frame.height
+            if self.position == .top {
+                self.view.center.y -= (self.view.frame.height )
+            }else if self.position == .bottom {
+                self.view.center.y += (self.view.frame.height )
+            }
         }, completion: { _ in
             self.view.removeFromSuperview()
             self.onDismiss?()
@@ -192,7 +214,7 @@ public class SNPnotificationBar{
     private func textHeight() -> CGFloat {
         let font = SNPnotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
-        let lines = Int(size.width / (presenter?.view.frame.width ?? 0))
+        let lines = Int(size.width / (presenter.view.frame.width ))
         return 50.0 + CGFloat(lines) * size.height
     }
     
@@ -213,4 +235,3 @@ public class SNPnotificationBar{
         NotificationCenter.default.removeObserver(self)
     }
 }
-
