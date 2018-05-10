@@ -5,6 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/SNPnotificationBar.svg?style=flat)](https://cocoapods.org/pods/SNPnotificationBar)
 [![Platform](https://img.shields.io/cocoapods/p/SNPnotificationBar.svg?style=flat)](https://cocoapods.org/pods/SNPnotificationBar)
 
+## Screenshot
+
+![alt text](https://raw.githubusercontent.com/ahmedAlmasri/SNPnotificationBar/master/screen/screenshot.gif)
+ 
 
 ## Example
 
