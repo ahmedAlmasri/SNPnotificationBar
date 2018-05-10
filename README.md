@@ -5,11 +5,15 @@
 [![License](https://img.shields.io/cocoapods/l/SNPnotificationBar.svg?style=flat)](https://cocoapods.org/pods/SNPnotificationBar)
 [![Platform](https://img.shields.io/cocoapods/p/SNPnotificationBar.svg?style=flat)](https://cocoapods.org/pods/SNPnotificationBar)
 
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+* Swift 4.0
+* Xcode 9.0+
+* iOS 9.0+
 
 ## Installation
 
