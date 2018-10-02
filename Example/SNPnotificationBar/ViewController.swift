@@ -5,17 +5,9 @@
 //  Created by ahmedAlmasri on 05/10/2018.
 //  Copyright (c) 2018 ahmedAlmasri. All rights reserved.
 //
-
-//
-//  SNPnotificationBar.swift
-//  Pods-SNPnotificationBar_Tests
-//
-//  Created by Ahmad Almasri on 5/10/18.
-//
-
 import Foundation
 import UIKit
-
+import SNPnotificationBar
 class ViewController: UIViewController {
     @IBOutlet weak var padinngValue: UISlider!
     @IBOutlet weak var marginValue: UISlider!
@@ -37,15 +29,15 @@ class ViewController: UIViewController {
     }
     @IBAction func errorTapped(_ sender:UIButton){
         configView()
-        SNPnotificationBar.init(self, text: "Hello world! :) ", style: .error ,position: isTopSwirch.isOn ?  .top : .bottom).show()
+       SNPnotificationBar.init(self, text: "Hello world! :) ", style: .error ,position: isTopSwirch.isOn ?  .top : .bottom).show()
     }
     @IBAction func warningTapped(_ sender:UIButton){
         configView()
-        SNPnotificationBar.init(self, text: "Hello world! :) ", style: .warning ,position: isTopSwirch.isOn ?  .top : .bottom).show()
+      SNPnotificationBar.init(self, text: "Hello world! :) ", style: .warning ,position: isTopSwirch.isOn ?  .top : .bottom).show()
     }
     @IBAction func successTapped(_ sender:UIButton){
         configView()
-        SNPnotificationBar.init(self, text: "Hello world! :) ", style: .success ,position: isTopSwirch.isOn ?  .top : .bottom).show()
+    SNPnotificationBar.init(self, text: "Hello world! :) ", style: .success ,position: isTopSwirch.isOn ?  .top : .bottom).show()
     }
     
     func configView(){

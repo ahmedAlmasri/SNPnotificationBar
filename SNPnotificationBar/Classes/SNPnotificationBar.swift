@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 
+
+
 public class SNPnotificationBarConfiguration {
     
     
@@ -21,6 +23,15 @@ public class SNPnotificationBarConfiguration {
     
     public var margin: CGFloat
     
+    fileprivate var topSafeArea: CGFloat
+    
+    
+    fileprivate var marginSafeArea: CGFloat {
+        
+        return  margin + topSafeArea
+    }
+    
+    
     public var warningColor: UIColor
     
     public var successColor: UIColor
@@ -30,6 +41,7 @@ public class SNPnotificationBarConfiguration {
     public var infoColor: UIColor
     
     public var cornerRadius:CGFloat
+    
     
     init() {
         duration = 4.0
@@ -42,6 +54,7 @@ public class SNPnotificationBarConfiguration {
         infoColor = #colorLiteral(red: 0.1725490196, green: 0.6470588235, blue: 0.7960784314, alpha: 1)
         cornerRadius = 0
         margin = 0
+        topSafeArea = 0
     }
 }
 
@@ -98,19 +111,38 @@ public class SNPnotificationBar{
     private let onDismiss: (() -> ())?
     private var view: UIView!
     private var position:SNPnotificationBarPosition
+    private var associatedImageView:UIImageView!
+    private var image:UIImage?
+    private var label:UILabel!
+    
+    private var topSafeArea: CGFloat!
+    private var bottomSafeArea: CGFloat!
     
     public init(_ presenter: UIViewController,
                 text: String,
                 style: SNPnotificationBarStyle,
-                position:SNPnotificationBarPosition = .top,
+                image: UIImage? = nil,
                 onDismiss: (() -> ())? = nil) {
         
-        
+        self.image = image
         self.presenter = presenter
         self.text = text
         self.style = style
         self.onDismiss = onDismiss
-        self.position = position
+        self.position = .top
+        
+        if #available(iOS 11.0, *) {
+            topSafeArea = presenter.view.safeAreaInsets.top
+            bottomSafeArea = presenter.view.safeAreaInsets.bottom
+        } else {
+            topSafeArea = presenter.topLayoutGuide.length
+            bottomSafeArea = presenter.bottomLayoutGuide.length
+        }
+        
+        
+        SNPnotificationBar.sharedConfig.topSafeArea = topSafeArea
+        
+        
         setupView()
         subscribeForRotationChanges()
     }
@@ -124,14 +156,15 @@ public class SNPnotificationBar{
     }
     
     private func setupView() {
-        let margin = SNPnotificationBar.sharedConfig.margin
+        let margin = SNPnotificationBar.sharedConfig.marginSafeArea
         let width = presenter.view.frame.width
         let height = SNPnotificationBar.sharedConfig.padding + textHeight()
-        
-        view = UIView(frame: CGRect(x: margin,
+        view = UIView(frame: CGRect(x: 0,
                                     y: (-height+margin),
-                                    width: (width - (margin*2)),
+                                    width: (width),
                                     height: height))
+        
+        
         
         setupPosition()
         view?.backgroundColor = style.config().backgroundColor
@@ -139,12 +172,43 @@ public class SNPnotificationBar{
         view.clipsToBounds = true
         view.layer.cornerRadius = SNPnotificationBar.sharedConfig.cornerRadius
         presenter.view.addSubview(view)
+        // setupConstraints()
         
+        // setupAssociatedImage()
         setupLabel()
+        
+        
+        if image != nil {
+            //CGRect(origin: CGPoint(x: SNPnotificationBar.sharedConfig.padding - 10, y: view.frame.height/2), size: CGSize(width: 20.0, height: 20.0))
+            let padding = SNPnotificationBar.sharedConfig.padding
+            associatedImageView = UIImageView(frame: CGRect(origin: CGPoint(x: 12,
+                                                                            y: padding / 2),
+                                                            size: CGSize(width: 40,
+                                                                         height: 40)))
+            associatedImageView.center = self.label.center
+            associatedImageView.frame.origin.x = 12
+            associatedImageView.image = image
+            view.addSubview(associatedImageView!)
+        }
     }
-    
+    func setupConstraints() {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.leadingAnchor.constraint(equalTo: presenter.view!.leadingAnchor, constant: 0).isActive = true
+        
+        view.trailingAnchor.constraint(equalTo:  presenter.view!.trailingAnchor, constant: 0).isActive = true
+        if #available(iOS 11.0, *) {
+            view.topAnchor.constraint(equalTo: presenter.view!.safeAreaLayoutGuide.topAnchor,    constant: 0).isActive = true
+        } else {
+            view.topAnchor.constraint(equalTo: presenter.view!.topAnchor,    constant: 0).isActive = true
+        }
+        
+        view.heightAnchor.constraint(equalToConstant: 50.0).isActive = true
+        // view.widthAnchor.constraint(equalToConstant: 50.0).isActive = true
+        
+        
+    }
     func setupPosition(){
-        let margin = SNPnotificationBar.sharedConfig.margin
+        let margin = SNPnotificationBar.sharedConfig.marginSafeArea
         let height = SNPnotificationBar.sharedConfig.padding + textHeight()
         
         switch self.position {
@@ -162,19 +226,21 @@ public class SNPnotificationBar{
         let font = SNPnotificationBar.sharedConfig.font
         let textColor = SNPnotificationBar.sharedConfig.textColor
         
-        let label = UILabel(frame: CGRect(origin: CGPoint(x: padding / 2,
-                                                          y: padding / 2),
-                                          size: CGSize(width: view.bounds.width - padding,
-                                                       height: view.bounds.height - padding)))
+        label = UILabel(frame: CGRect(origin: CGPoint(x: (padding / 2) < 54 ? 54 : (padding / 2) ,
+                                                      y: padding / 2),
+                                      size: CGSize(width: view.bounds.width - (((padding / 2) < 54 ? 54 : (padding / 2)) * 2),
+                                                   height: view.bounds.height - padding)))
         label.text = text
         label.font = font
-        label.numberOfLines = 0
+        label.numberOfLines = 3
         label.lineBreakMode = .byWordWrapping
         label.textAlignment = .center
         label.textColor = textColor
         view.addSubview(label)
     }
-    
+    private func setupAssociatedImage() {
+        associatedImageView?.frame = CGRect(origin: CGPoint(x: SNPnotificationBar.sharedConfig.padding - 10, y: view.frame.height/2), size: CGSize(width: 20.0, height: 20.0))
+    }
     
     
     private func animateIn() {
@@ -184,9 +250,9 @@ public class SNPnotificationBar{
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.view.alpha = 1
             if self.position == .top {
-                self.view.center.y += (self.view.frame.height )
+                self.view.center.y += (self.view.frame.height)
             }else if self.position == .bottom {
-                self.view.frame.origin.y -=  SNPnotificationBar.sharedConfig.margin //(self.view.frame.height )
+                self.view.frame.origin.y -=  SNPnotificationBar.sharedConfig.marginSafeArea //(self.view.frame.height )
             }
         }, completion: nil)
         
