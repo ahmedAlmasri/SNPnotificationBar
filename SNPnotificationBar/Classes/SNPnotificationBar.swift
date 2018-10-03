@@ -8,8 +8,6 @@
 import Foundation
 import UIKit
 
-
-
 public class SNPnotificationBarConfiguration {
     
     
@@ -24,6 +22,7 @@ public class SNPnotificationBarConfiguration {
     public var margin: CGFloat
     
     fileprivate var topSafeArea: CGFloat
+    fileprivate var isShow = false
     
     
     fileprivate var marginSafeArea: CGFloat {
@@ -113,18 +112,30 @@ public class SNPnotificationBar{
     private var position:SNPnotificationBarPosition
     private var associatedImageView:UIImageView!
     private var image:UIImage?
+    private var imageColor:UIColor?
     private var label:UILabel!
+    private let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+    
+    private  var hasTopNotch: Bool {
+        if #available(iOS 11.0, tvOS 11.0, *) {
+            // with notch: 44.0 on iPhone X, XS, XS Max, XR.
+            // without notch: 20.0 on iPhone 8 on iOS 12+.
+            return UIApplication.shared.delegate?.window??.safeAreaInsets.top ?? 0 > 20
+        }
+        return false
+    }
     
     private var topSafeArea: CGFloat!
     private var bottomSafeArea: CGFloat!
-    
     public init(_ presenter: UIViewController,
                 text: String,
                 style: SNPnotificationBarStyle,
                 image: UIImage? = nil,
+                imageColor:UIColor? = nil ,
                 onDismiss: (() -> ())? = nil) {
         
         self.image = image
+        self.imageColor = imageColor
         self.presenter = presenter
         self.text = text
         self.style = style
@@ -132,11 +143,16 @@ public class SNPnotificationBar{
         self.position = .top
         
         if #available(iOS 11.0, *) {
-            topSafeArea = presenter.view.safeAreaInsets.top
-            bottomSafeArea = presenter.view.safeAreaInsets.bottom
+            if self.hasTopNotch {
+                topSafeArea = presenter.view.safeAreaInsets.top
+                bottomSafeArea = presenter.view.safeAreaInsets.bottom
+            }else {
+                topSafeArea = 0
+                bottomSafeArea = 0
+            }
         } else {
-            topSafeArea = presenter.topLayoutGuide.length
-            bottomSafeArea = presenter.bottomLayoutGuide.length
+            topSafeArea = 0
+            bottomSafeArea = 0
         }
         
         
@@ -171,7 +187,10 @@ public class SNPnotificationBar{
         view?.alpha = 0
         view.clipsToBounds = true
         view.layer.cornerRadius = SNPnotificationBar.sharedConfig.cornerRadius
-        presenter.view.addSubview(view)
+        
+        UIApplication.shared.keyWindow?.addSubview(view)
+        
+        //   presenter.view.addSubview(view)
         // setupConstraints()
         
         // setupAssociatedImage()
@@ -180,6 +199,8 @@ public class SNPnotificationBar{
         
         if image != nil {
             //CGRect(origin: CGPoint(x: SNPnotificationBar.sharedConfig.padding - 10, y: view.frame.height/2), size: CGSize(width: 20.0, height: 20.0))
+            
+            let img = image?.withRenderingMode(.alwaysTemplate)
             let padding = SNPnotificationBar.sharedConfig.padding
             associatedImageView = UIImageView(frame: CGRect(origin: CGPoint(x: 12,
                                                                             y: padding / 2),
@@ -187,7 +208,8 @@ public class SNPnotificationBar{
                                                                          height: 40)))
             associatedImageView.center = self.label.center
             associatedImageView.frame.origin.x = 12
-            associatedImageView.image = image
+            associatedImageView.image = img
+            associatedImageView.tintColor = self.imageColor
             view.addSubview(associatedImageView!)
         }
     }
@@ -245,19 +267,22 @@ public class SNPnotificationBar{
     
     private func animateIn() {
         
+        statusBar.isHidden = true
         
-        
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
-            self.view.alpha = 1
-            if self.position == .top {
-                self.view.center.y += (self.view.frame.height)
-            }else if self.position == .bottom {
-                self.view.frame.origin.y -=  SNPnotificationBar.sharedConfig.marginSafeArea //(self.view.frame.height )
+        if !SNPnotificationBar.sharedConfig.isShow {
+            SNPnotificationBar.sharedConfig.isShow  = true
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+                self.view.alpha = 1
+                if self.position == .top {
+                    self.view.center.y += (self.view.frame.height)
+                }else if self.position == .bottom {
+                    self.view.frame.origin.y -=  SNPnotificationBar.sharedConfig.marginSafeArea //(self.view.frame.height )
+                }
+            }, completion: nil)
+            
+            if style.config().dismiss == .auto {
+                animateOut(withDelay: SNPnotificationBar.sharedConfig.duration)
             }
-        }, completion: nil)
-        
-        if style.config().dismiss == .auto {
-            animateOut(withDelay: SNPnotificationBar.sharedConfig.duration)
         }
     }
     
@@ -273,6 +298,14 @@ public class SNPnotificationBar{
         }, completion: { _ in
             self.view.removeFromSuperview()
             self.onDismiss?()
+            
+            //    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
+            
+            SNPnotificationBar.sharedConfig.isShow  = false
+            self.statusBar.isHidden = false
+            
+            //   })
+            
         })
     }
     
@@ -281,7 +314,7 @@ public class SNPnotificationBar{
         let font = SNPnotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
         let lines = Int(size.width / (presenter.view.frame.width ))
-        return 50.0 + CGFloat(lines) * size.height
+        return 60.0 + CGFloat(lines) * size.height
     }
     
     
