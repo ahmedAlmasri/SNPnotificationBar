@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SNPnotificationBar'
-  s.version          = '1.0.6'
+  s.version          = '1.0.7'
   s.swift_version = '4.0'
   s.summary          = 'SNPnotificationBar for iOS apps.'
 
