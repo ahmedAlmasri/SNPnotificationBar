@@ -144,7 +144,7 @@ public class SNPnotificationBar{
         
         if #available(iOS 11.0, *) {
             if self.hasTopNotch {
-                topSafeArea = presenter.view.safeAreaInsets.top
+                topSafeArea =  UIApplication.shared.keyWindow?.safeAreaInsets.top
                 bottomSafeArea = presenter.view.safeAreaInsets.bottom
             }else {
                 topSafeArea = 0
