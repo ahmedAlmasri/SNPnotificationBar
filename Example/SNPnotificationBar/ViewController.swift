@@ -326,7 +326,7 @@ public class SNPnotificationBar{
     private func subscribeForRotationChanges() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(handleRotation),
-                                               name: NSNotification.Name.UIDeviceOrientationDidChange,
+                                               name: UIDevice.orientationDidChangeNotification,
                                                object: nil)
     }
     

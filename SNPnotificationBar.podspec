@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'SNPnotificationBar'
   s.version          = '1.0.8'
-  s.swift_version = '4.0'
+  s.swift_version = '4.2'
   s.summary          = 'SNPnotificationBar for iOS apps.'
 
 # This description is used to generate tags and improve search results.
