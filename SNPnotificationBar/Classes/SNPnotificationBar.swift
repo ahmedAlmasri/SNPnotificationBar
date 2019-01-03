@@ -104,7 +104,7 @@ public class SNPnotificationBar{
     
     public static let sharedConfig = SNPnotificationBarConfiguration()
     
-    private var presenter: UIViewController
+    private var presenter: UIViewController?
     private var text: String
     private let style: SNPnotificationBarStyle
     private let onDismiss: (() -> ())?
@@ -127,7 +127,7 @@ public class SNPnotificationBar{
     
     private var topSafeArea: CGFloat!
     private var bottomSafeArea: CGFloat!
-    public init(_ presenter: UIViewController,
+    public init(_ presenter: UIViewController? = nil,
                 text: String,
                 style: SNPnotificationBarStyle,
                 image: UIImage? = nil,
@@ -145,7 +145,7 @@ public class SNPnotificationBar{
         if #available(iOS 11.0, *) {
             if self.hasTopNotch {
                 topSafeArea =  UIApplication.shared.keyWindow?.safeAreaInsets.top
-                bottomSafeArea = presenter.view.safeAreaInsets.bottom
+                bottomSafeArea = UIApplication.shared.keyWindow?.safeAreaInsets.bottom
             }else {
                 topSafeArea = 0
                 bottomSafeArea = 0
@@ -173,7 +173,7 @@ public class SNPnotificationBar{
     
     private func setupView() {
         let margin = SNPnotificationBar.sharedConfig.marginSafeArea
-        let width = presenter.view.frame.width
+        let width = presenter?.view.frame.width ??  UIScreen.main.bounds.width
         let height = SNPnotificationBar.sharedConfig.padding + textHeight()
         view = UIView(frame: CGRect(x: 0,
                                     y: (-height+margin),
@@ -213,22 +213,22 @@ public class SNPnotificationBar{
             view.addSubview(associatedImageView!)
         }
     }
-    func setupConstraints() {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.leadingAnchor.constraint(equalTo: presenter.view!.leadingAnchor, constant: 0).isActive = true
-        
-        view.trailingAnchor.constraint(equalTo:  presenter.view!.trailingAnchor, constant: 0).isActive = true
-        if #available(iOS 11.0, *) {
-            view.topAnchor.constraint(equalTo: presenter.view!.safeAreaLayoutGuide.topAnchor,    constant: 0).isActive = true
-        } else {
-            view.topAnchor.constraint(equalTo: presenter.view!.topAnchor,    constant: 0).isActive = true
-        }
-        
-        view.heightAnchor.constraint(equalToConstant: 50.0).isActive = true
-        // view.widthAnchor.constraint(equalToConstant: 50.0).isActive = true
-        
-        
-    }
+//    func setupConstraints() {
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.leadingAnchor.constraint(equalTo: presenter.view!.leadingAnchor, constant: 0).isActive = true
+//
+//        view.trailingAnchor.constraint(equalTo:  presenter.view!.trailingAnchor, constant: 0).isActive = true
+//        if #available(iOS 11.0, *) {
+//            view.topAnchor.constraint(equalTo: presenter.view!.safeAreaLayoutGuide.topAnchor,    constant: 0).isActive = true
+//        } else {
+//            view.topAnchor.constraint(equalTo: presenter.view!.topAnchor,    constant: 0).isActive = true
+//        }
+//
+//        view.heightAnchor.constraint(equalToConstant: 50.0).isActive = true
+//        // view.widthAnchor.constraint(equalToConstant: 50.0).isActive = true
+//
+//
+//    }
     func setupPosition(){
         let margin = SNPnotificationBar.sharedConfig.marginSafeArea
         let height = SNPnotificationBar.sharedConfig.padding + textHeight()
@@ -313,7 +313,8 @@ public class SNPnotificationBar{
     private func textHeight() -> CGFloat {
         let font = SNPnotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
-        let lines = Int(size.width / (presenter.view.frame.width ))
+        let width = presenter?.view.frame.width  ?? UIScreen.main.bounds.width
+        let lines = Int(size.width / (width))
         return 60.0 + CGFloat(lines) * size.height
     }
     
