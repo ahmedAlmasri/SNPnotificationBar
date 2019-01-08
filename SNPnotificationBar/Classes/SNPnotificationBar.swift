@@ -208,7 +208,7 @@ public class SNPnotificationBar{
                                                                          height: 40)))
             associatedImageView.center = self.label.center
             associatedImageView.frame.origin.x = 12
-            associatedImageView.image = img
+            associatedImageView.image = image
             associatedImageView.tintColor = self.imageColor
             view.addSubview(associatedImageView!)
         }
