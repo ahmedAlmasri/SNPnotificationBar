@@ -200,7 +200,7 @@ public class SNPnotificationBar{
         if image != nil {
             //CGRect(origin: CGPoint(x: SNPnotificationBar.sharedConfig.padding - 10, y: view.frame.height/2), size: CGSize(width: 20.0, height: 20.0))
             
-            let img = image?.withRenderingMode(.alwaysTemplate)
+           // let img = image?.withRenderingMode(.alwaysTemplate)
             let padding = SNPnotificationBar.sharedConfig.padding
             associatedImageView = UIImageView(frame: CGRect(origin: CGPoint(x: 12,
                                                                             y: padding / 2),
